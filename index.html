@@ -21,6 +21,9 @@
         .question {
             margin-bottom: 15px;
         }
+        .option {
+            margin: 5px 0;
+        }
         button {
             width: 100%;
             padding: 10px;
@@ -37,6 +40,12 @@
             margin-top: 10px;
             color: #333;
         }
+        .correct-answer {
+            background-color: #d4edda; /* light green */
+        }
+        .wrong-answer {
+            background-color: #f8d7da; /* light red */
+        }
     </style>
 </head>
 <body>
@@ -46,7 +55,7 @@
 
     <div id="quiz"></div>
 
-    <button onclick="checkAnswers()">정답 확인하기</button>
+    <button onclick="checkAnswers()" id="checkButton">정답 확인하기</button>
 
     <div id="result" class="result"></div>
 </div>
@@ -87,8 +96,8 @@
                 case 'number':
                     randomOption = (Math.random() * 0.7 + 0.1).toFixed(1);
                     break;
-                case 'percentage':
-                    randomOption = `${(Math.floor(Math.random() * 3) + 1)}%`;
+                case 'percentage': // 에어드랍 비율
+                    randomOption = `${Math.floor(Math.random() * 7)}%`; // 0% to 6%
                     break;
                 case 'duration':
                     const durations = ['1개월', '6개월', '1년', '2.5년'];
@@ -98,8 +107,11 @@
                     const dates = ['10월 30일', '12월 15일', '12월 30일'];
                     randomOption = dates[Math.floor(Math.random() * dates.length)];
                     break;
-                case 'conversion':
-                    randomOption = `${Math.floor(Math.random() * 21) * 5}%`;
+                case 'conversion': // 전환 비율
+                    randomOption = `${Math.floor(Math.random() * 21) * 5}%`; // 0% to 100% in 5% increments
+                    break;
+                default:
+                    randomOption = '기타';
                     break;
             }
             options.add(randomOption);
@@ -111,18 +123,36 @@
         const quizDiv = document.getElementById('quiz');
         quiz_list.forEach((quiz, index) => {
             const type = quiz.q.includes('모빅소각량') ? 'number' :
-                         quiz.q.includes('비율') ? 'percentage' :
+                         quiz.q.includes('에어드랍 비율') ? 'percentage' :
+                         quiz.q.includes('전환 비율') ? 'conversion' :
                          quiz.q.includes('주기') ? 'duration' :
-                         quiz.q.includes('기한') ? 'date' : 'conversion';
+                         quiz.q.includes('기한') ? 'date' : 'other';
             const options = getRandomOptions(quiz.a, type);
 
             const questionDiv = document.createElement('div');
             questionDiv.className = 'question';
-            questionDiv.innerHTML = `<strong>${index + 1}. ${quiz.q}</strong>`;
-            options.forEach(option => {
+            const questionTitle = document.createElement('strong');
+            questionTitle.innerText = `${index + 1}. ${quiz.q}`;
+            questionDiv.appendChild(questionTitle);
+
+            options.forEach((option, optionIndex) => {
+                const inputId = `q${index}_option${optionIndex}`;
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.id = inputId;
+                input.name = `q${index}`;
+                input.value = option;
+
                 const label = document.createElement('label');
-                label.innerHTML = `<input type="radio" name="q${index}" value="${option}"> ${option}`;
-                questionDiv.appendChild(label);
+                label.htmlFor = inputId;
+                label.innerText = option;
+
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.appendChild(input);
+                optionDiv.appendChild(label);
+
+                questionDiv.appendChild(optionDiv);
             });
             quizDiv.appendChild(questionDiv);
         });
@@ -131,12 +161,33 @@
     function checkAnswers() {
         let score = 0;
         quiz_list.forEach((quiz, index) => {
+            const correctAnswer = quiz.a;
             const selected = document.querySelector(`input[name="q${index}"]:checked`);
-            if (selected && selected.value === quiz.a) {
-                score++;
+            const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+            inputs.forEach(input => {
+                const optionDiv = input.parentElement;
+                if (input.value === correctAnswer) {
+                    // Highlight correct answer
+                    optionDiv.classList.add('correct-answer');
+                }
+            });
+            if (selected) {
+                if (selected.value === correctAnswer) {
+                    score++;
+                } else {
+                    // Highlight user's wrong answer
+                    selected.parentElement.classList.add('wrong-answer');
+                }
             }
         });
         document.getElementById('result').innerText = `총 점수: ${score} / ${quiz_list.length}`;
+        // Disable all inputs
+        const allInputs = document.querySelectorAll('input[type="radio"]');
+        allInputs.forEach(input => {
+            input.disabled = true;
+        });
+        // Disable the check button
+        document.getElementById('checkButton').disabled = true;
     }
 
     window.onload = renderQuiz;
