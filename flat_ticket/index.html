@@ -51,7 +51,7 @@
 <body>
 
 <div class="quiz-container">
-    <h2>사지선다형 퀴즈</h2>
+    <h2>비트모빅 정액권 퀴즈</h2>
 
     <div id="quiz"></div>
 
@@ -82,10 +82,10 @@
         { q: "50모의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "25%" },
         { q: "100모의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "50%" },
         { q: "200모의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "100%" },
-        { q: "10모의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 1월 31일" },
-        { q: "50모의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 12월 31일" },
-        { q: "100모의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 12월 31일" },
-        { q: "200모의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 12월 31일" }
+        { q: "10모의 론칭기한(조건충족기한)은 언제인가?", a: "1월 31일" },
+        { q: "50모의 론칭기한(조건충족기한)은 언제인가?", a: "12월 31일" },
+        { q: "100모의 론칭기한(조건충족기한)은 언제인가?", a: "12월 31일" },
+        { q: "200모의 론칭기한(조건충족기한)은 언제인가?", a: "12월 31일" }
     ];
 
     function getRandomOptions(correctAnswer, type) {
@@ -105,11 +105,11 @@
                     break;
                 case 'date':
                     const dates = [
-                        '2025년 10월 30일',
-                        '2025년 12월 15일',
-                        '2025년 12월 30일',
-                        '2025년 12월 31일',
-                        '2025년 1월 31일'
+                        '10월 30일',
+                        '12월 15일',
+                        '12월 30일',
+                        '12월 31일',
+                        '1월 31일'
                     ];
                     randomOption = dates[Math.floor(Math.random() * dates.length)];
                     break;
@@ -133,11 +133,6 @@
                          quiz.q.includes('전환 비율') ? 'conversion' :
                          quiz.q.includes('주기') ? 'duration' :
                          quiz.q.includes('기한') ? 'date' : 'other';
-
-            // If the correct answer is a date without '2025년 ', add it
-            if (type === 'date' && !quiz.a.startsWith('2025년 ')) {
-                quiz.a = '2025년 ' + quiz.a;
-            }
 
             const options = getRandomOptions(quiz.a, type);
 
