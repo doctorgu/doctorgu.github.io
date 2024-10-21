@@ -1,1 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비트모빅 정액권 퀴즈</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .option {
+            margin: 5px 0;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 10px;
+            color: #333;
+        }
+        .correct-answer {
+            background-color: #d4edda; /* light green */
+        }
+        .wrong-answer {
+            background-color: #f8d7da; /* light red */
+        }
+    </style>
+</head>
+<body>
 
+<div class="quiz-container">
+    <h2>사지선다형 퀴즈</h2>
+
+    <div id="quiz"></div>
+
+    <button onclick="checkAnswers()" id="checkButton">정답 확인하기</button>
+
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+    const quiz_list = [
+        { q: "10모의 모빅소각량은?", a: "0.1" },
+        { q: "50모의 모빅소각량은?", a: "0.2" },
+        { q: "100모의 모빅소각량은?", a: "0.3" },
+        { q: "200모의 모빅소각량은?", a: "0.4" },
+        { q: "10모의 에어드랍 비율은 몇 %인가?", a: "4%" },
+        { q: "50모의 에어드랍 비율은 몇 %인가?", a: "4%" },
+        { q: "100모의 에어드랍 비율은 몇 %인가?", a: "4%" },
+        { q: "200모의 에어드랍 비율은 몇 %인가?", a: "4%" },
+        { q: "10모의 에어드랍 주기는 몇 년인가?", a: "2.5년" },
+        { q: "50모의 에어드랍 주기는 몇 년인가?", a: "1년" },
+        { q: "100모의 에어드랍 주기는 몇 개월인가?", a: "6개월" },
+        { q: "200모의 에어드랍 주기는 몇 개월인가?", a: "1개월" },
+        { q: "10모의 구매소각기한은 언제인가?", a: "11월 30일" },
+        { q: "50모의 구매소각기한은 언제인가?", a: "11월 30일" },
+        { q: "100모의 구매소각기한은 언제인가?", a: "11월 30일" },
+        { q: "200모의 구매소각기한은 언제인가?", a: "11월 30일" },
+        { q: "10모의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "0%" },
+        { q: "50모의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "25%" },
+        { q: "100모의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "50%" },
+        { q: "200모의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "100%" },
+        { q: "10모의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 1월 31일" },
+        { q: "50모의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 12월 31일" },
+        { q: "100모의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 12월 31일" },
+        { q: "200모의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 12월 31일" }
+    ];
+
+    function getRandomOptions(correctAnswer, type) {
+        const options = new Set([correctAnswer]);
+        while (options.size < 4) {
+            let randomOption;
+            switch (type) {
+                case 'number':
+                    randomOption = (Math.random() * 0.7 + 0.1).toFixed(1);
+                    break;
+                case 'percentage': // 에어드랍 비율
+                    randomOption = `${Math.floor(Math.random() * 7)}%`; // 0% to 6%
+                    break;
+                case 'duration':
+                    const durations = ['1개월', '6개월', '1년', '2.5년'];
+                    randomOption = durations[Math.floor(Math.random() * durations.length)];
+                    break;
+                case 'date':
+                    const dates = [
+                        '2025년 10월 30일',
+                        '2025년 12월 15일',
+                        '2025년 12월 30일',
+                        '2025년 12월 31일',
+                        '2025년 1월 31일'
+                    ];
+                    randomOption = dates[Math.floor(Math.random() * dates.length)];
+                    break;
+                case 'conversion': // 전환 비율
+                    randomOption = `${Math.floor(Math.random() * 21) * 5}%`; // 0% to 100% in 5% increments
+                    break;
+                default:
+                    randomOption = '기타';
+                    break;
+            }
+            options.add(randomOption);
+        }
+        return Array.from(options).sort(() => Math.random() - 0.5);
+    }
+
+    function renderQuiz() {
+        const quizDiv = document.getElementById('quiz');
+        quiz_list.forEach((quiz, index) => {
+            const type = quiz.q.includes('모빅소각량') ? 'number' :
+                         quiz.q.includes('에어드랍 비율') ? 'percentage' :
+                         quiz.q.includes('전환 비율') ? 'conversion' :
+                         quiz.q.includes('주기') ? 'duration' :
+                         quiz.q.includes('기한') ? 'date' : 'other';
+
+            // If the correct answer is a date without '2025년 ', add it
+            if (type === 'date' && !quiz.a.startsWith('2025년 ')) {
+                quiz.a = '2025년 ' + quiz.a;
+            }
+
+            const options = getRandomOptions(quiz.a, type);
+
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            const questionTitle = document.createElement('strong');
+            questionTitle.innerText = `${index + 1}. ${quiz.q}`;
+            questionDiv.appendChild(questionTitle);
+
+            options.forEach((option, optionIndex) => {
+                const inputId = `q${index}_option${optionIndex}`;
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.id = inputId;
+                input.name = `q${index}`;
+                input.value = option;
+
+                const label = document.createElement('label');
+                label.htmlFor = inputId;
+                label.innerText = option;
+
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.appendChild(input);
+                optionDiv.appendChild(label);
+
+                questionDiv.appendChild(optionDiv);
+            });
+            quizDiv.appendChild(questionDiv);
+        });
+    }
+
+    function checkAnswers() {
+        let score = 0;
+        quiz_list.forEach((quiz, index) => {
+            const correctAnswer = quiz.a;
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+            inputs.forEach(input => {
+                const optionDiv = input.parentElement;
+                if (input.value === correctAnswer) {
+                    // Highlight correct answer
+                    optionDiv.classList.add('correct-answer');
+                }
+            });
+            if (selected) {
+                if (selected.value === correctAnswer) {
+                    score++;
+                } else {
+                    // Highlight user's wrong answer
+                    selected.parentElement.classList.add('wrong-answer');
+                }
+            }
+        });
+        document.getElementById('result').innerText = `총 점수: ${score} / ${quiz_list.length}`;
+        // Disable all inputs
+        const allInputs = document.querySelectorAll('input[type="radio"]');
+        allInputs.forEach(input => {
+            input.disabled = true;
+        });
+        // Disable the check button
+        document.getElementById('checkButton').disabled = true;
+    }
+
+    window.onload = renderQuiz;
+</script>
+
+</body>
+</html>
