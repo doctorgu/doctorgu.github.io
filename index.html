@@ -1,1 +1,146 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="/favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="Web site created using create-react-app"/><link rel="apple-touch-icon" href="/logo192.png"/><link rel="manifest" href="/manifest.json"/><title>React App</title><link href="/static/css/main.8c8b27cf.chunk.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div><script>!function(e){function t(t){for(var n,i,a=t[0],c=t[1],l=t[2],s=0,p=[];s<a.length;s++)i=a[s],Object.prototype.hasOwnProperty.call(o,i)&&o[i]&&p.push(o[i][0]),o[i]=0;for(n in c)Object.prototype.hasOwnProperty.call(c,n)&&(e[n]=c[n]);for(f&&f(t);p.length;)p.shift()();return u.push.apply(u,l||[]),r()}function r(){for(var e,t=0;t<u.length;t++){for(var r=u[t],n=!0,a=1;a<r.length;a++){var c=r[a];0!==o[c]&&(n=!1)}n&&(u.splice(t--,1),e=i(i.s=r[0]))}return e}var n={},o={1:0},u=[];function i(t){if(n[t])return n[t].exports;var r=n[t]={i:t,l:!1,exports:{}};return e[t].call(r.exports,r,r.exports,i),r.l=!0,r.exports}i.e=function(e){var t=[],r=o[e];if(0!==r)if(r)t.push(r[2]);else{var n=new Promise((function(t,n){r=o[e]=[t,n]}));t.push(r[2]=n);var u,a=document.createElement("script");a.charset="utf-8",a.timeout=120,i.nc&&a.setAttribute("nonce",i.nc),a.src=function(e){return i.p+"static/js/"+({}[e]||e)+"."+{3:"6effdfc2"}[e]+".chunk.js"}(e);var c=new Error;u=function(t){a.onerror=a.onload=null,clearTimeout(l);var r=o[e];if(0!==r){if(r){var n=t&&("load"===t.type?"missing":t.type),u=t&&t.target&&t.target.src;c.message="Loading chunk "+e+" failed.\n("+n+": "+u+")",c.name="ChunkLoadError",c.type=n,c.request=u,r[1](c)}o[e]=void 0}};var l=setTimeout((function(){u({type:"timeout",target:a})}),12e4);a.onerror=a.onload=u,document.head.appendChild(a)}return Promise.all(t)},i.m=e,i.c=n,i.d=function(e,t,r){i.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},i.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},i.t=function(e,t){if(1&t&&(e=i(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(i.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var n in e)i.d(r,n,function(t){return e[t]}.bind(null,n));return r},i.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return i.d(t,"a",t),t},i.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},i.p="/",i.oe=function(e){throw console.error(e),e};var a=this.webpackJsonputils=this.webpackJsonputils||[],c=a.push.bind(a);a.push=t,a=a.slice();for(var l=0;l<a.length;l++)t(a[l]);var f=c;r()}([])</script><script src="/static/js/2.e10c75e5.chunk.js"></script><script src="/static/js/main.87b8c622.chunk.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사지선다형 퀴즈</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h2>사지선다형 퀴즈</h2>
+
+    <div id="quiz"></div>
+
+    <button onclick="checkAnswers()">정답 확인하기</button>
+
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+    const quiz_list = [
+        { q: "정액권 10의 모빅소각량은?", a: "0.1" },
+        { q: "정액권 50의 모빅소각량은?", a: "0.2" },
+        { q: "정액권 100의 모빅소각량은?", a: "0.3" },
+        { q: "정액권 200의 모빅소각량은?", a: "0.4" },
+        { q: "정액권 10의 에어드랍 비율은 몇 %인가?", a: "4%" },
+        { q: "정액권 50의 에어드랍 비율은 몇 %인가?", a: "4%" },
+        { q: "정액권 100의 에어드랍 비율은 몇 %인가?", a: "4%" },
+        { q: "정액권 200의 에어드랍 비율은 몇 %인가?", a: "4%" },
+        { q: "정액권 10의 에어드랍 주기는 몇 년인가?", a: "2.5년" },
+        { q: "정액권 50의 에어드랍 주기는 몇 년인가?", a: "1년" },
+        { q: "정액권 100의 에어드랍 주기는 몇 개월인가?", a: "6개월" },
+        { q: "정액권 200의 에어드랍 주기는 몇 개월인가?", a: "1개월" },
+        { q: "정액권 10의 구매소각기한은 언제인가?", a: "11월 30일" },
+        { q: "정액권 50의 구매소각기한은 언제인가?", a: "11월 30일" },
+        { q: "정액권 100의 구매소각기한은 언제인가?", a: "11월 30일" },
+        { q: "정액권 200의 구매소각기한은 언제인가?", a: "11월 30일" },
+        { q: "정액권 10의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "0%" },
+        { q: "정액권 50의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "25%" },
+        { q: "정액권 100의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "50%" },
+        { q: "정액권 200의 에어드랍 축적분 1모콘솔 전환 비율은 몇 %인가?", a: "100%" },
+        { q: "정액권 10의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 1월 31일" },
+        { q: "정액권 50의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 12월 31일" },
+        { q: "정액권 100의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 12월 31일" },
+        { q: "정액권 200의 론칭기한(조건충족기한)은 언제인가?", a: "2025년 12월 31일" }
+    ];
+
+    function getRandomOptions(correctAnswer, type) {
+        const options = new Set([correctAnswer]);
+        while (options.size < 4) {
+            let randomOption;
+            switch (type) {
+                case 'number':
+                    randomOption = (Math.random() * 0.7 + 0.1).toFixed(1);
+                    break;
+                case 'percentage':
+                    randomOption = `${(Math.floor(Math.random() * 3) + 4)}%`;
+                    break;
+                case 'duration':
+                    const durations = ['1개월', '6개월', '1년', '2.5년'];
+                    randomOption = durations[Math.floor(Math.random() * durations.length)];
+                    break;
+                case 'date':
+                    const dates = ['11월 30일', '12월 15일', '12월 31일'];
+                    randomOption = dates[Math.floor(Math.random() * dates.length)];
+                    break;
+                case 'conversion':
+                    randomOption = `${Math.floor(Math.random() * 21) * 5}%`;
+                    break;
+            }
+            options.add(randomOption);
+        }
+        return Array.from(options).sort(() => Math.random() - 0.5);
+    }
+
+    function renderQuiz() {
+        const quizDiv = document.getElementById('quiz');
+        quiz_list.forEach((quiz, index) => {
+            const type = quiz.q.includes('모빅소각량') ? 'number' :
+                         quiz.q.includes('비율') ? 'percentage' :
+                         quiz.q.includes('주기') ? 'duration' :
+                         quiz.q.includes('기한') ? 'date' : 'conversion';
+            const options = getRandomOptions(quiz.a, type);
+
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            questionDiv.innerHTML = `<strong>${index + 1}. ${quiz.q}</strong>`;
+            options.forEach(option => {
+                const label = document.createElement('label');
+                label.innerHTML = `<input type="radio" name="q${index}" value="${option}"> ${option}`;
+                questionDiv.appendChild(label);
+            });
+            quizDiv.appendChild(questionDiv);
+        });
+    }
+
+    function checkAnswers() {
+        let score = 0;
+        quiz_list.forEach((quiz, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            if (selected && selected.value === quiz.a) {
+                score++;
+            }
+        });
+        document.getElementById('result').innerText = `총 점수: ${score} / ${quiz_list.length}`;
+    }
+
+    window.onload = renderQuiz;
+</script>
+
+</body>
+</html>
