@@ -8,7 +8,7 @@
 
     <script>
         // The URL of the PHP proxy script
-        const proxyUrl = 'https://doctorgu.free.nf/crawler'; // Replace 'yourproxy.php' with the actual script name if different
+        const proxyUrl = 'https://doctorgu.free.nf/yourproxy.php'; // Replace 'yourproxy.php' with the actual script name if different
 
         // The URL of the content we want to fetch
         const targetUrl = 'https://blockchain.mobick.info/address/1Mobick2ooMoburnedxxxxxxxxy3dw2tf';
@@ -23,7 +23,10 @@
         fetch(url)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not OK');
+                    // Attempt to get error message from response body
+                    return response.text().then(errorText => {
+                        throw new Error(errorText || 'Network response was not OK');
+                    });
                 }
                 return response.text();
             })
@@ -32,7 +35,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                contentDiv.innerHTML = 'An error occurred while fetching the content.';
+                contentDiv.innerHTML = 'Error: ' + error.message;
             });
     </script>
 </body>
