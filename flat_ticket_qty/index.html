@@ -20,7 +20,12 @@
         const contentDiv = document.getElementById('contentDiv');
 
         // Fetch the content via the PHP proxy
-        fetch(url)
+        fetch(url, {    
+                method: 'GET',    
+                withCredentials: true,    
+                crossorigin: true,    
+                mode: 'no-cors',       
+            })
             .then(response => {
                 if (!response.ok) {
                     // Attempt to get error message from response body
