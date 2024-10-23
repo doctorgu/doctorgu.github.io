@@ -1,23 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fetch Blockchain Data</title>
-    </head>
-    <body>
-
-    <h1>Blockchain Address Information</h1>
-    <pre id="output">Loading...</pre>
+    <title>Fetch Content via PHP Proxy</title>
+</head>
+<body>
+    <div id="contentDiv">Loading content...</div>
 
     <script>
-        fetch('https://blockchain.mobick.info/address/1Mobick2ooMoburnedxxxxxxxxy3dw2tf')
-            .then(response => response.text())
-                .then(data => {
-                        document.getElementById('output').textContent = data;
-                            })
-                                .catch(error => {
-                                        document.getElementById('output').textContent = 'Error fetching data: ' + error;
-                                            });
-                                            </script>
+        // The URL of the PHP proxy script
+        const proxyUrl = 'https://doctorgu.free.nf/crawler'; // Replace 'yourproxy.php' with the actual script name if different
 
-                                            </body>
-                                            </html>
+        // The URL of the content we want to fetch
+        const targetUrl = 'https://blockchain.mobick.info/address/1Mobick2ooMoburnedxxxxxxxxy3dw2tf';
+
+        // Build the full URL to the PHP proxy, including the 'url' parameter
+        const url = proxyUrl + '?url=' + encodeURIComponent(targetUrl);
+
+        // The div where we want to display the content
+        const contentDiv = document.getElementById('contentDiv');
+
+        // Fetch the content via the PHP proxy
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                }
+                return response.text();
+            })
+            .then(data => {
+                contentDiv.innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                contentDiv.innerHTML = 'An error occurred while fetching the content.';
+            });
+    </script>
+</body>
+</html>
