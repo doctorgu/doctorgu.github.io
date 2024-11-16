@@ -57,12 +57,19 @@
     <style>
       /* Center the SVG and buttons */
       body {
-        display: flex;
+        /* display: flex; */
         flex-direction: column;
         align-items: start;
       }
       body > div {
         padding: 10px;
+      }
+      body > div > label {
+        width: 100px;
+      }
+
+      .control-buttons {
+        display: flex;
       }
 
       .control-buttons button {
@@ -72,11 +79,16 @@
       }
 
       .link {
-        font-size: 20px;
+        display: flex;
+        font-size: 15px;
       }
-      .link input {
+      .link input[type="text"] {
         font-size: inherit;
-        width: 385px;
+        width: 350px;
+      }
+
+      .animate {
+        display: flex;
       }
 
       #copy {
@@ -91,20 +103,35 @@
     <div class="control-buttons">
       <button onclick="zoomOut()">Zoom Out</button>
       <button onclick="zoomIn()">Zoom In</button>
-      <button onclick="resetZoom()">Reset Zoom</button>
-      <button onclick="copySVGAndCSS()">Copy SVG and CSS</button>
+      <button onclick="preview()">Preview</button>
+      <button onclick="copySource()">Copy Source</button>
     </div>
 
     <div class="link">
       <label>
-        Referral:
         <input
-          id="link"
-          type="text"
-          placeholder="마이 페이지 - 추천인 링크"
-          value=""
+          type="checkbox"
+          id="checkReferral"
+          checked
+          onchange="checkReferral_change(this.checked)"
         />
+        Referral:
       </label>
+      <input
+        id="link"
+        type="text"
+        placeholder="마이 페이지 - 추천인 링크"
+        value=""
+      />
+    </div>
+
+    <div class="animate">
+      <label>
+        <input type="checkbox" id="checkAnimate" checked />
+        Animate:
+      </label>
+      <input id="seconds" type="number" min="5" max="15" value="5" />
+      seconds
     </div>
 
     <div>
@@ -208,10 +235,22 @@
         updateViewBox();
       }
 
-      // Function to reset zoom
-      function resetZoom() {
-        width = initialWidth;
-        updateViewBox();
+      function preview() {
+        fullContent = getFullContent();
+        newWin = window.open("", "", "width=640,height=480");
+        newWin.document.write(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview</title>
+</head>
+<body>
+    ${fullContent}
+</body>
+</html>
+`);
       }
 
       // Function to apply the new viewBox
@@ -219,38 +258,45 @@
         svgElement.style.width = `${width}px`;
       }
 
-      function copySVGAndCSS() {
+      function getFullContent() {
+        checkReferral = document.getElementById("checkReferral").checked;
+        checkAnimate = document.getElementById("checkAnimate").checked;
+
         // Get the SVG element's outer HTML
         const svgElement = document.getElementById("animated-svg").outerHTML;
 
         // Get the CSS styles from the <style> tag
-        const styles = document.getElementById("logoStyle").innerHTML;
+        let styles = document.getElementById("logoStyle").innerHTML;
 
-        const href = document.getElementById("link").value;
+        const href = checkReferral ? document.getElementById("link").value : "";
         const hrefStart = href ? `<a href="${href}">` : "";
         const hrefEnd = href ? "</a>" : "";
 
-        // Combine the SVG and CSS into one string
+        const seconds = checkAnimate
+          ? document.getElementById("seconds").value
+          : 0;
+        styles = styles.replaceAll("5s", `${seconds}s`);
+
         const fullContent = `
-<html>
-<head>
-	<style>
-		${styles}
-	</style>
-</head>
-<body>
+<style>
+  ${styles}
+</style>
 ${hrefStart}
 ${svgElement}
 ${hrefEnd}
-</body>
-</html>
 `;
 
+        return fullContent;
+      }
+      function copySource() {
+        fullContent = getFullContent();
+
+        msg = "Source code copied to clipboard!";
         // Use the Clipboard API to copy the content
         navigator.clipboard
           .writeText(fullContent)
           .then(() => {
-            alert("SVG and CSS code copied to clipboard!");
+            alert(msg);
           })
           .catch((err) => {
             console.error("Failed to copy: ", err);
@@ -261,8 +307,16 @@ ${hrefEnd}
             tempTextArea.select();
             document.execCommand("copy");
             document.body.removeChild(tempTextArea);
-            alert("SVG and CSS code copied to clipboard!");
+            alert(msg);
           });
+      }
+
+      function checkReferral_change(checked) {
+        if (!checked) {
+          document.getElementById("link").value = "";
+        } else {
+          document.getElementById("link").focus();
+        }
       }
     </script>
   </body>
